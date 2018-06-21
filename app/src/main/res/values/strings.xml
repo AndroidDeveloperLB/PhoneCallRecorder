@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PhoneCallRecorderTest</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="channel_name__call_recording">Call recording</string>
+    <string name="channel_description__call_recording">Notification for call recording</string>
+    <string name="notification_title__call_recording">Call recorder</string>
+</resources>
