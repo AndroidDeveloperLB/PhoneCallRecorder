@@ -7,7 +7,7 @@ import android.os.Build
 
 enum class AudioSource(val audioSourceValue: Int, val minApi: Int) {
     VOICE_CALL(MediaRecorder.AudioSource.VOICE_CALL, 4), DEFAULT(MediaRecorder.AudioSource.DEFAULT, 1), MIC(MediaRecorder.AudioSource.MIC, 1),
-    CAMCORDER(MediaRecorder.AudioSource.CAMCORDER, 7), VOICE_COMMUNICATION(MediaRecorder.AudioSource.VOICE_COMMUNICATION, 11),
+    VOICE_COMMUNICATION(MediaRecorder.AudioSource.VOICE_COMMUNICATION, 11), CAMCORDER(MediaRecorder.AudioSource.CAMCORDER, 7),
     VOICE_RECOGNITION(MediaRecorder.AudioSource.VOICE_RECOGNITION, 7),
     VOICE_UPLINK(MediaRecorder.AudioSource.VOICE_UPLINK, 4), VOICE_DOWNLINK(MediaRecorder.AudioSource.VOICE_DOWNLINK, 4),
     REMOTE_SUBMIX(MediaRecorder.AudioSource.REMOTE_SUBMIX, 19),

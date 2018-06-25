@@ -8,22 +8,23 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
-    val recorder = Recorder()
+    lateinit var recorder: Recorder
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        recorder = Recorder(this)
         setContentView(R.layout.activity_main)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permissionsToRequest = getAppDeclaredPermissions(this)
             requestPermissions(permissionsToRequest, 0)
         }
         playRecordingButton.setOnClickListener {
-            recorder.playRecording(this@MainActivity)
+            recorder.playRecording()
         }
         recordingSourceButton.setOnClickListener {
             val audioSources = AudioSource.getAllSupportedValues(this)
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
         updateRecordingSourceButton()
         phoneEditText.setText(PreferenceManager.getDefaultSharedPreferences(this).getString("last_phone_entered", null))
+//        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
     fun updateRecordingSourceButton() {
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         recorder.stopPlayRecoding()
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("last_phone_entered", phoneEditText.text.toString()).apply()
     }
 
     companion object {

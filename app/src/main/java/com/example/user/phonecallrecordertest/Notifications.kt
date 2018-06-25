@@ -4,8 +4,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.support.annotation.StringRes
-import android.support.v4.app.NotificationCompat
+import androidx.annotation.StringRes
+import androidx.core.app.NotificationCompat
 import java.util.*
 
 object Notifications {

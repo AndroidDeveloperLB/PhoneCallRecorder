@@ -7,14 +7,18 @@ import android.telephony.TelephonyManager
 import android.util.Log
 
 class CallRecordingService : Service() {
-    val recorder = Recorder()
+    lateinit var recorder: Recorder
+    private var isIncomingCall = true
+
 
     companion object {
         const val EXTRA_PHONE_INTENT = "EXTRA_PHONE_INTENT"
+        const val OUTGOING_CALLS_RECORDING_PREPARATION_DELAY_IN_MS = 1000L
     }
 
     override fun onCreate() {
         super.onCreate()
+        recorder = Recorder(this)
         Log.d("AppLog", "Service Created")
         val notification = Notifications.Builder(this, R.string.channel_id__call_recording).setContentTitle(getString(R.string.notification_title__call_recording))
                 .setSmallIcon(android.R.drawable.ic_notification_overlay).build()
@@ -29,6 +33,8 @@ class CallRecordingService : Service() {
                 Log.d("AppLog", "outgoing call")
 //                val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 //                audioManager.mode=AudioManager.MODE_IN_COMMUNICATION
+//                startRecording()
+                isIncomingCall = false
                 return super.onStartCommand(callIntent, flags, startId)
             }
             else -> {
@@ -37,7 +43,10 @@ class CallRecordingService : Service() {
                 when (state) {
                     TelephonyManager.EXTRA_STATE_OFFHOOK -> {
                         Log.d("AppLog", "call started")
+//                        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+//                        audioManager.isSpeakerphoneOn = true
                         startRecording()
+//                        audioManager.isSpeakerphoneOn = false
 //        https://stuff.mit.edu/afs/sipb/project/android/docs/reference/android/media/AudioManager.html#MODE_IN_COMMUNICATION
 //        MODE_NORMAL, MODE_RINGTONE, MODE_IN_CALL or MODE_IN_COMMUNICATION
 //        audioManager.mode = AudioManager.MODE_IN_CALL
@@ -47,6 +56,7 @@ class CallRecordingService : Service() {
                         stopRecording()
                     }
                     TelephonyManager.EXTRA_STATE_RINGING -> {
+                        isIncomingCall = true
                         Log.d("AppLog", "call ringing")
                     }
                 }
@@ -66,7 +76,7 @@ class CallRecordingService : Service() {
 
     fun startRecording() {
         Log.d("AppLog", "about to start recording... isRecording?${recorder.isRecording}")
-        recorder.startRecording(this)
+        recorder.startRecording(if (isIncomingCall) 0L else OUTGOING_CALLS_RECORDING_PREPARATION_DELAY_IN_MS)
     }
 
     fun stopRecording() {

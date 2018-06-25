@@ -3,9 +3,9 @@ package com.example.user.phonecallrecordertest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.ContextCompat
 import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 
 class PhoneBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
