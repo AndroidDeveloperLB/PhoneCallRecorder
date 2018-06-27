@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -45,6 +46,11 @@ class MainActivity : AppCompatActivity() {
         updateRecordingSourceButton()
         phoneEditText.setText(PreferenceManager.getDefaultSharedPreferences(this).getString("last_phone_entered", null))
 //        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+//        Log.d("AppLog", "${audioManager.getParameters("channels")}")
+        val deviceInfo = "${Build.MODEL};${Build.BRAND};${Build.DISPLAY};${Build.DEVICE};${Build.BOARD};${Build.HARDWARE};${Build.MANUFACTURER};${Build.ID}" +
+                ";${Build.PRODUCT};${Build.VERSION.RELEASE};${Build.VERSION.SDK_INT};${Build.VERSION.INCREMENTAL};${Build.VERSION.CODENAME}"
+        Log.d("AppLog", deviceInfo)
     }
 
     fun updateRecordingSourceButton() {

@@ -77,6 +77,8 @@ class CallRecordingService : Service() {
     fun startRecording() {
         Log.d("AppLog", "about to start recording... isRecording?${recorder.isRecording}")
         recorder.startRecording(if (isIncomingCall) 0L else OUTGOING_CALLS_RECORDING_PREPARATION_DELAY_IN_MS)
+//        recorder.startRecording(0L)
+
     }
 
     fun stopRecording() {

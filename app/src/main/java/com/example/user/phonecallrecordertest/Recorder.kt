@@ -21,11 +21,7 @@ class Recorder(context: Context) {
         this.context = context.applicationContext ?: context
     }
 
-    //some insights of Android versions and devices:
-    //Before Android 6 , maybe VOICE_CALL is the best. From Android 6, maybe DEFAULT is the best.
-    //Pixel 2 with Android P : use DEFAULT
-    //OnePlus 2 with Android 6.0.1 : use VOICE_CALL for incoming, VOICE_CALL with some delay after prepare for outgoing calls
-    //Galaxy S7 with Android 8.0.0:  nothing works, for both incoming and outgoing
+    //table of which devices need which configuration: https://docs.google.com/spreadsheets/d/1AWVI2AF-MHGuU1m3FRbhx6xYWltqJIkXT1cHu7mzZYY/edit#gid=0
     private var mediaRecorder: MediaRecorder? = null
     var isRecording = false
     private var player: MediaPlayer? = null
@@ -126,6 +122,7 @@ class Recorder(context: Context) {
             audioManager.mode = AudioManager.MODE_IN_CALL
             audioManager.isSpeakerphoneOn = true
             audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL), 0)
+//            audioManager.setParameters("noise_suppression=off")
         }
 //        mediaRecorder!!.setAudioChannels(2)
         mediaRecorder!!.setAudioSource(audioSource.audioSourceValue)
@@ -191,6 +188,7 @@ class Recorder(context: Context) {
         if (audioSource == AudioSource.MIC) {
             val audioManager = context.getSystemService(AUDIO_SERVICE) as AudioManager
             audioManager.mode = AudioManager.MODE_NORMAL
+            audioManager.setParameters("noise_suppression=auto")
         }
     }
 
