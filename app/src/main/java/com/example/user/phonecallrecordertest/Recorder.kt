@@ -21,7 +21,6 @@ class Recorder(context: Context) {
         this.context = context.applicationContext ?: context
     }
 
-    //table of which devices need which configuration: https://docs.google.com/spreadsheets/d/1AWVI2AF-MHGuU1m3FRbhx6xYWltqJIkXT1cHu7mzZYY/edit#gid=0
     private var mediaRecorder: MediaRecorder? = null
     var isRecording = false
     private var player: MediaPlayer? = null
