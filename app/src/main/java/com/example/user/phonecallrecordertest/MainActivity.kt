@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permissionsToRequest = getAppDeclaredPermissions(this)
-            requestPermissions(permissionsToRequest, 0)
+            if (permissionsToRequest != null)
+                requestPermissions(permissionsToRequest, 0)
         }
         playRecordingButton.setOnClickListener {
             recorder.playRecording()
