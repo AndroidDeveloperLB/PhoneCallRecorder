@@ -30,19 +30,19 @@ class Recorder(context: Context) {
         fun getFilePath(context: Context): String {
 //            return File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString(), "recording.amr").absolutePath
 //            return File(context.getExternalFilesDir("call_recording"), "recording.amr").absolutePath
-            return File(context.filesDir, "call_recording/recording.amr").absolutePath;
+            return File(context.filesDir, "call_recording/recording.amr").absolutePath
         }
 
 
         @JvmStatic
         fun getSavedAudioSource(context: Context): AudioSource {
-            val audioSource: AudioSource = AudioSource.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("recodringSource", AudioSource.VOICE_CALL.name))
+            val audioSource: AudioSource = AudioSource.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString("recordingSource", AudioSource.VOICE_CALL.name)!!)
             return audioSource
         }
 
         @JvmStatic
         fun setSavedAudioSource(context: Context, audioSource: AudioSource) {
-            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("recodringSource", audioSource.name).apply()
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("recordingSource", audioSource.name).apply()
         }
     }
 
@@ -75,7 +75,7 @@ class Recorder(context: Context) {
             player!!.start()
             Toast.makeText(context, "playing...", Toast.LENGTH_SHORT).show()
         } catch (e: IOException) {
-            Log.d("AppLog", "failed to play audio :" + e)
+            Log.d("AppLog", "failed to play audio :$e")
             Toast.makeText(context, "error playing", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
             player?.release()
@@ -102,12 +102,10 @@ class Recorder(context: Context) {
             mediaRecorder!!.release()
         }
         mediaRecorder = MediaRecorder()
-        mediaRecorder!!.setOnErrorListener(object : MediaRecorder.OnErrorListener {
-            override fun onError(mp: MediaRecorder?, what: Int, extra: Int) {
-                Log.d("AppLog", "onError $what $extra")
-                stopRecording()
-            }
-        })
+        mediaRecorder!!.setOnErrorListener { mp, what, extra ->
+            Log.d("AppLog", "onError $what $extra")
+            stopRecording()
+        }
 //        mediaRecorder!!.setOnInfoListener(object : MediaRecorder.OnInfoListener {
 //            override fun onInfo(mp: MediaRecorder?, what: Int, extra: Int) {
 //                Log.d("AppLog", "onInfo $what $extra")
