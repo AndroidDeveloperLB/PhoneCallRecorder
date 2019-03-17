@@ -10,7 +10,6 @@ class CallRecordingService : Service() {
     lateinit var recorder: Recorder
     private var isIncomingCall = true
 
-
     companion object {
         const val EXTRA_PHONE_INTENT = "EXTRA_PHONE_INTENT"
         const val OUTGOING_CALLS_RECORDING_PREPARATION_DELAY_IN_MS = 1000L
