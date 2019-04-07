@@ -13,7 +13,6 @@ import androidx.annotation.UiThread
 import java.io.File
 import java.io.IOException
 
-
 class Recorder(context: Context) {
     private val context: Context
 
@@ -32,7 +31,6 @@ class Recorder(context: Context) {
 //            return File(context.getExternalFilesDir("call_recording"), "recording.amr").absolutePath
             return File(context.filesDir, "call_recording/recording.amr").absolutePath
         }
-
 
         @JvmStatic
         fun getSavedAudioSource(context: Context): AudioSource {
@@ -53,12 +51,12 @@ class Recorder(context: Context) {
         Toast.makeText(context, "playing...", Toast.LENGTH_SHORT).show()
         Log.d("AppLog", "playing audio...")
         player = MediaPlayer()
-        player!!.setOnInfoListener(object : MediaPlayer.OnInfoListener {
-            override fun onInfo(p0: MediaPlayer?, what: Int, extra: Int): Boolean {
-                Log.d("AppLog", "onInfo $what $extra")
-                return false
-            }
-        })
+//        player!!.setOnInfoListener(object : MediaPlayer.OnInfoListener {
+//            override fun onInfo(p0: MediaPlayer?, what: Int, extra: Int): Boolean {
+//                Log.d("AppLog", "onInfo $what $extra")
+//                return false
+//            }
+//        })
         player!!.setOnErrorListener(object : MediaPlayer.OnErrorListener {
             override fun onError(p0: MediaPlayer?, what: Int, extra: Int): Boolean {
                 Log.d("AppLog", "onError $what $extra")
@@ -95,7 +93,7 @@ class Recorder(context: Context) {
         isRecording = true
         val filepath = getFilePath(context)
         Log.d("AppLog", "About to record into $filepath")
-        //Toast.makeText(getApplicationContext(), "Recorder_Sarted" + fname, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Recorder_Started" + fname, Toast.LENGTH_LONG).show();
         if (mediaRecorder != null) {
             mediaRecorder!!.stop()
             mediaRecorder!!.reset()
@@ -104,6 +102,7 @@ class Recorder(context: Context) {
         mediaRecorder = MediaRecorder()
         mediaRecorder!!.setOnErrorListener { mp, what, extra ->
             Log.d("AppLog", "onError $what $extra")
+            Toast.makeText(context, "error while recording", Toast.LENGTH_SHORT).show()
             stopRecording()
         }
 //        mediaRecorder!!.setOnInfoListener(object : MediaRecorder.OnInfoListener {
@@ -123,7 +122,6 @@ class Recorder(context: Context) {
         }
 //        mediaRecorder!!.setAudioChannels(2)
         mediaRecorder!!.setAudioSource(audioSource.audioSourceValue)
-
 //        mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
 //        mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
 //
@@ -132,8 +130,6 @@ class Recorder(context: Context) {
         //
         mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB)
         mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-
-
         val file = File(filepath)
         file.parentFile.mkdirs()
         if (file.exists())
@@ -151,6 +147,7 @@ class Recorder(context: Context) {
                         Toast.makeText(context, "started to record call", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
                         Log.e("AppLog", "error while recording:$e")
+                        Toast.makeText(context, "error while starting to record", Toast.LENGTH_SHORT).show()
                         mediaRecorder?.reset()
                         stopRecording()
                         e.printStackTrace()
@@ -162,6 +159,7 @@ class Recorder(context: Context) {
                 Handler().postDelayed(runnable, delayToWaitForRecordingPreparation)
         } catch (e: Exception) {
             Log.e("AppLog", "error while preparing:$e")
+            Toast.makeText(context, "error while preparing to record", Toast.LENGTH_SHORT).show()
             mediaRecorder?.reset()
             stopRecording()
             e.printStackTrace()
@@ -176,7 +174,7 @@ class Recorder(context: Context) {
         if (mediaRecorder != null) {
             try {
                 mediaRecorder!!.stop()
-            } catch (e: IllegalStateException) {
+            } catch (e: Exception) {
             }
             mediaRecorder!!.release()
             mediaRecorder = null

@@ -11,7 +11,6 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             val items = arrayOfNulls<CharSequence>(audioSources.size)
             for (i in 0 until audioSources.size)
                 items[i] = audioSources[i].name
-            AlertDialog.Builder(this@MainActivity).setTitle("choose recording source")
+            androidx.appcompat.app.AlertDialog.Builder(this@MainActivity).setTitle("choose recording source")
                     .setItems(items) { _, which ->
                         Recorder.setSavedAudioSource(this@MainActivity, audioSources[which])
                         updateRecordingSourceButton()
