@@ -1,69 +1,70 @@
 package com.example.user.phonecallrecordertest
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.preference.PreferenceManager
+import android.os.*
+import android.provider.Settings
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
-
+import androidx.preference.PreferenceManager
+import com.example.user.phonecallrecordertest.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
-    lateinit var recorder: Recorder
+    private lateinit var recorder: Recorder
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this)).also { setContentView(it.root) }
         recorder = Recorder(this)
-        setContentView(R.layout.activity_main)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permissionsToRequest = getAppDeclaredPermissions(this)
             if (permissionsToRequest != null)
                 requestPermissions(permissionsToRequest, 0)
         }
-        playRecordingButton.setOnClickListener {
+        binding.playRecordingButton.setOnClickListener {
             recorder.playRecording()
         }
-        recordingSourceButton.setOnClickListener {
+        binding.recordingSourceButton2.setOnClickListener {
             val audioSources = AudioSource.getAllSupportedValues(this)
             val items = arrayOfNulls<CharSequence>(audioSources.size)
             for (i in 0 until audioSources.size)
                 items[i] = audioSources[i].name
-            androidx.appcompat.app.AlertDialog.Builder(this@MainActivity).setTitle("choose recording source")
-                    .setItems(items) { _, which ->
-                        Recorder.setSavedAudioSource(this@MainActivity, audioSources[which])
-                        updateRecordingSourceButton()
-                    }.show()
+           MaterialAlertDialogBuilder(this@MainActivity).setTitle("choose recording source")
+                .setItems(items) { _, which ->
+                    Recorder.setSavedAudioSource(this@MainActivity, audioSources[which])
+                    updateRecordingSourceButton()
+                }.show()
         }
-        callPhoneButton.setOnClickListener {
-            val phone = phoneEditText.text.toString()
+        binding.callPhoneButton.setOnClickListener {
+            val phone = binding.phoneEditText.text.toString()
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString("last_phone_entered", phone).apply()
             dialPhone(this@MainActivity, phone)
         }
         updateRecordingSourceButton()
-        phoneEditText.setText(PreferenceManager.getDefaultSharedPreferences(this).getString("last_phone_entered", null))
-//        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-//        Log.d("AppLog", "${audioManager.getParameters("channels")}")
+        binding.phoneEditText.setText(PreferenceManager.getDefaultSharedPreferences(this)
+            .getString("last_phone_entered", null))
         val deviceInfo = "${Build.MODEL};${Build.BRAND};${Build.DISPLAY};${Build.DEVICE};${Build.BOARD};${Build.HARDWARE};${Build.MANUFACTURER};${Build.ID}" +
                 ";${Build.PRODUCT};${Build.VERSION.RELEASE};${Build.VERSION.SDK_INT};${Build.VERSION.INCREMENTAL};${Build.VERSION.CODENAME}"
         Log.d("AppLog", deviceInfo)
+        binding.openAccessibilitySettings.setOnClickListener {
+            requestAccessibilityPermission()
+        }
     }
 
     fun updateRecordingSourceButton() {
         val audioSource: AudioSource = Recorder.getSavedAudioSource(this)
-        recordingSourceButton.text = "recording source:${audioSource.name}"
+        binding.recordingSourceButton2.text = "recording source:${audioSource.name}"
     }
 
     override fun onDestroy() {
         super.onDestroy()
         recorder.stopPlayRecoding()
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putString("last_phone_entered", phoneEditText.text.toString()).apply()
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+            .putString("last_phone_entered", binding.phoneEditText.text.toString()).apply()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -88,6 +89,25 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private fun requestAccessibilityPermission() {
+        var intent = Intent("com.samsung.accessibility.installed_service")
+        if (intent.resolveActivity(packageManager) == null) {
+            intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        }
+        val extraFragmentArgKey = ":settings:fragment_args_key"
+        val extraShowFragmentArguments = ":settings:show_fragment_args"
+        val bundle = Bundle()
+        val showArgs: String = "${packageName}/${MyAccessibilityService::class.java.name}"
+        bundle.putString(extraFragmentArgKey, showArgs)
+        intent.putExtra(extraFragmentArgKey, showArgs)
+        intent.putExtra(extraShowFragmentArguments, bundle)
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY))
+        }
+    }
+
     companion object {
         @SuppressLint("MissingPermission")
         @JvmStatic
@@ -106,7 +126,5 @@ class MainActivity : AppCompatActivity() {
             }
             throw RuntimeException("cannot find current app?!")
         }
-
     }
-
 }

@@ -6,4 +6,7 @@
     <string name="channel_name__call_recording">Call recording</string>
     <string name="channel_description__call_recording">Notification for call recording</string>
     <string name="notification_title__call_recording">Call recorder</string>
+
+    <string name="accessibility_service_label">callRecorderAccessibilityService</string>
+
 </resources>

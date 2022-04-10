@@ -71,7 +71,6 @@ class Recorder(context: Context) {
             player!!.setDataSource(recordingFilePath)
             player!!.prepare()
             player!!.start()
-            Toast.makeText(context, "playing...", Toast.LENGTH_SHORT).show()
         } catch (e: IOException) {
             Log.d("AppLog", "failed to play audio :$e")
             Toast.makeText(context, "error playing", Toast.LENGTH_SHORT).show()

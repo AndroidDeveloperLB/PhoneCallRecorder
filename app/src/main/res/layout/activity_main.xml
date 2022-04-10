@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center"
-        android:orientation="vertical" android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin" android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical" android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         tools:context="com.example.user.phonecallrecordertest.MainActivity">
 
         <Button
             android:id="@+id/playRecordingButton" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:text="play last recording"/>
+            android:layout_height="wrap_content" android:text="play last recording" />
 
         <Button
-            android:id="@+id/recordingSourceButton" android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/recordingSourceButton2" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/phoneEditText" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:hint="phone number to call" android:inputType="phone" android:minWidth="100dp"/>
+            android:hint="phone number to call" android:inputType="phone" android:minWidth="100dp" />
 
         <Button
             android:id="@+id/callPhoneButton" android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="call above phone number"/>
+            android:text="call above phone number" />
+
+        <TextView
+            android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center"
+            android:text="If you enable accessibility, set audio source to voice-recognition, and maybe also enable speakers, you have a good chance of succeeding to record" />
+
+        <Button
+            android:id="@+id/openAccessibilitySettings" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Open accessibility settings" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
