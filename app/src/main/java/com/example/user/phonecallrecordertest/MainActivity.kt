@@ -1,5 +1,6 @@
 package com.example.user.phonecallrecordertest
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
@@ -8,7 +9,13 @@ import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
 import com.example.user.phonecallrecordertest.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -16,10 +23,76 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class MainActivity : AppCompatActivity() {
     private lateinit var recorder: Recorder
     private lateinit var binding: ActivityMainBinding
+    private val REQUEST_CODE_STORAGE_PERMISSION = 100
+
+    fun toast(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+    private fun requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            Log.d("print", "Hey")
+            try {
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                val uri = Uri.fromParts("package", this.packageName, null)
+                intent.data = uri
+
+                storagePermissionResultLauncher.launch(intent)
+            } catch (e: Exception){
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+
+                storagePermissionResultLauncher.launch(intent)
+            }
+        } else {
+            Log.d("print", "Hello")
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_CODE_STORAGE_PERMISSION
+            )
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    val storagePermissionResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+        ActivityResultCallback<ActivityResult?> {
+            if (Environment.isExternalStorageManager())
+            {
+                // Permission granted. Now resume your workflow.
+                toast(this, "Permission Granted")
+            } else {
+                toast(this, "Permission Denied")
+            }
+        })
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // Both read and write permissions granted
+                // You can proceed with your logic here
+                Log.d("permissions", "Granted")
+            } else {
+                // Handle the case where the user denied some or all permissions
+                Log.d("permissions", "Not Granted")
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this)).also { setContentView(it.root) }
         recorder = Recorder(this)
+        if (!(Environment.isExternalStorageManager())){
+            requestStoragePermission()
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val permissionsToRequest = getAppDeclaredPermissions(this)
             if (permissionsToRequest != null)

@@ -5,6 +5,7 @@ import android.content.Context.AUDIO_SERVICE
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.os.Environment
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.util.Log
@@ -12,6 +13,9 @@ import android.widget.Toast
 import androidx.annotation.UiThread
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class Recorder(context: Context) {
     private val context: Context
@@ -26,10 +30,26 @@ class Recorder(context: Context) {
     private var audioSource: AudioSource? = null
 
     companion object {
+        private var filePath: String? = null
         fun getFilePath(context: Context): String {
-//            return File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString(), "recording.amr").absolutePath
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val fileName = "CallRecord_$timeStamp.amr"
+            val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
+                .absolutePath + "/CallRecordings/"
+
+            // Create the directory if it doesn't exist
+            val directory = File(directoryPath)
+            if (!directory.exists()) {
+                directory.mkdirs()
+            }
+
+            filePath = "$directoryPath$fileName"
+
+            Log.d("file_path", "$filePath")
+            return filePath as String
+//            return File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).toString(), "recording.amr").absolutePath
 //            return File(context.getExternalFilesDir("call_recording"), "recording.amr").absolutePath
-            return File(context.filesDir, "call_recording/recording.amr").absolutePath
+//            return File(context.filesDir, "call_recording/recording.amr").absolutePath
         }
 
         @JvmStatic
@@ -87,10 +107,13 @@ class Recorder(context: Context) {
 
     @UiThread
     fun startRecording(delayToWaitForRecordingPreparation: Long = 0L) {
+        Log.d("print", "1")
         if (isRecording)
             return
         isRecording = true
+        Log.d("print", "2")
         val filepath = getFilePath(context)
+        Log.d("print", "3")
         Log.d("AppLog", "About to record into $filepath")
         //Toast.makeText(getApplicationContext(), "Recorder_Started" + fname, Toast.LENGTH_LONG).show();
         if (mediaRecorder != null) {
